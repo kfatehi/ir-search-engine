@@ -5,13 +5,11 @@ JDBC=jdbc.drivers=org.postgresql.Driver
 CLASSPATH=.:$(PGSQL):$(HIKARI):$(BUILD)
 
 SRC= \
-		 src/ir/assignments/three/db/*.java \
-		 src/ir/assignments/four/*.java \
+		 src/ir/db/*.java \
+		 src/ir/search/*.java \
 
 build-tf-index: compile
-	java -classpath $(CLASSPATH) -D$(JDBC) \
-		-Dpg_password=$(shell cat _private/prod_db_password.txt) \
-		 ir.assignments.four.Indexer
+	java -classpath $(CLASSPATH) -D$(JDBC) ir.search.Indexer
 
 compile: clean
 	@javac -g -d $(BUILD) -classpath $(CLASSPATH) $(SRC)
