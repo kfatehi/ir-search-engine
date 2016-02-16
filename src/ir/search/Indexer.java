@@ -23,8 +23,14 @@ public final class Indexer {
 	 * @param args The first element should contain the path to a text file.
 	 */
 	public static void main(String[] args) {
+		// Term frequencies
+		HashMap<String, ArrayList> tf = new HashMap<>();
+
+		// Doc frequencies
+		HashMap<String, Integer> df = new HashMap<>();
+
 		// Map of Document ID to ArrayList of Postings List
-		HashMap<String,ArrayList> map = new HashMap<>();
+		HashMap<String,HashMap> map = new HashMap<>();
 		Database.configure();
 		try {
 			Connection con = Database.conn;
@@ -40,12 +46,25 @@ public final class Indexer {
 				List<String> words = Utilities.tokenizeString(docText);
 
 				for (String term : words) {
-					ArrayList<Integer> postingsList = map.getOrDefault(term, new ArrayList<>());
-					postingsList.add(docId);
-					map.put(term, postingsList);
+					HashMap<Integer,Integer> termFreq = map.get(term);
+
+					if (termFreq == null) {
+						termFreq = new HashMap<>();
+					}
+
+
+					// for a postings list, we added doc id to the termfreq which was an array list...
+					// termFreq.add(docId)
+					
+					// now we want to have docId:occurences
+
+					int currentValue = termFreq.getOrDefault(docId, 0);
+					termFreq.put(docId, currentValue+1);
+
+					map.put(term, termFreq);
+
 				}
 			}
-
 			System.out.println(map);
 
 			st.close();
