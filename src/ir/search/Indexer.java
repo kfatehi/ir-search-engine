@@ -13,7 +13,7 @@ import java.sql.*;
  
 public final class Indexer {
 
-	public static int totalDocs = 100;
+	public static int totalDocs = 32739;
 
 	public static void main(String[] args) {
 		// Term frequencies
