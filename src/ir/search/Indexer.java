@@ -12,16 +12,9 @@ import java.util.Collections;
 import java.sql.*;
  
 public final class Indexer {
-	/**
-	 * Loops through every page's text content to determine word frequencies.
-	 * Initializes a map that will consist of various word frequencies.
-	 * Creates a connection to the database and stores that connection.
-	 * A query is performed to pull in all the text from the pages within a table schema in the
-	 * database. 
-	 * After this query is executed, each line in the text is pulled out and is then tokenized.
-	 * Each word's frequency is recorded and is outputed to a map. It is then sorted and printed out.
-	 * @param args The first element should contain the path to a text file.
-	 */
+
+	public static int totalDocs = 100;
+
 	public static void main(String[] args) {
 		// Term frequencies
 		HashMap<String, ArrayList> tf = new HashMap<>();
@@ -37,34 +30,38 @@ public final class Indexer {
 			PreparedStatement st = con.prepareStatement(
 					"SELECT id,text FROM PAGES "
 					+"WHERE TEXT IS NOT NULL "
-					+"LIMIT 10");
+					+"LIMIT "+totalDocs);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
 				Integer docId = rs.getInt(1);
 				String docText = rs.getString(2);
 				List<String> words = Utilities.tokenizeString(docText);
-
 				for (String term : words) {
-					HashMap<Integer,Integer> termFreq = map.get(term);
-
-					if (termFreq == null) {
-						termFreq = new HashMap<>();
-					}
-
-
-					// for a postings list, we added doc id to the termfreq which was an array list...
-					// termFreq.add(docId)
-					
-					// now we want to have docId:occurences
-
+					HashMap<Integer,Integer> termFreq = map.getOrDefault(term, new HashMap<>());
 					int currentValue = termFreq.getOrDefault(docId, 0);
 					termFreq.put(docId, currentValue+1);
-
 					map.put(term, termFreq);
-
 				}
 			}
+
+
+			// Compute TF-IDF Scores
+			for (String term : map.keySet()) {
+				HashMap<Integer,Double> tfidfMap = new HashMap<>();
+				HashMap<Integer,Integer> termFreq = map.get(term);
+
+				for (Integer docId : termFreq.keySet()) {
+					int freq = termFreq.get(docId);
+					double wtf = 1 + Math.log(freq);
+					double tfidf = wtf * Math.log( totalDocs / termFreq.keySet().size() );
+
+					tfidfMap.put(docId, tfidf);
+				}
+
+				map.put(term, tfidfMap);
+			}
+
 			System.out.println(map);
 
 			st.close();
