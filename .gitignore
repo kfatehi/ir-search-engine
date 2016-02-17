@@ -1,5 +1,5 @@
-_tmp/
-_build/
-_private/
-_logs/*.txt
-_data/
+/_tmp/
+/_build/
+/_private/
+/_logs/*.txt
+/_corpus/
