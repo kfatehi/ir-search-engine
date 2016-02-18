@@ -10,32 +10,24 @@ import java.util.HashMap;
 import java.util.Collections;
 
 import java.sql.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import org.json.simple.parser.ParseException;
  
 public final class Indexer {
 
 	public static int totalDocs = 32739;
 
 	public static void main(String[] args) {
-		// Term frequencies
-		HashMap<String, ArrayList> tf = new HashMap<>();
-
-		// Doc frequencies
-		HashMap<String, Integer> df = new HashMap<>();
-
 		// Map of Document ID to ArrayList of Postings List
+		System.out.println("Indexer starting...");
 		HashMap<String,HashMap> map = new HashMap<>();
-		Database.configure();
 		try {
-			Connection con = Database.conn;
-			PreparedStatement st = con.prepareStatement(
-					"SELECT id,text FROM PAGES "
-					+"WHERE TEXT IS NOT NULL "
-					+"LIMIT "+totalDocs);
-			ResultSet rs = st.executeQuery();
-
-			while (rs.next()) {
-				Integer docId = rs.getInt(1);
-				String docText = rs.getString(2);
+			Corpus corpus = new Corpus("_corpus");
+			while (corpus.next()) { // && corpus.position < 10) {
+				System.out.print("\rProcessing document: "+corpus.position+" of "+corpus.size()+" ("+corpus.position/corpus.size()+"%)");
+				Integer docId = corpus.position;
+				String docText = corpus.current().getText();
 				List<String> words = Utilities.tokenizeString(docText);
 				for (String term : words) {
 					HashMap<Integer,Integer> termFreq = map.getOrDefault(term, new HashMap<>());
@@ -45,6 +37,7 @@ public final class Indexer {
 				}
 			}
 
+			System.out.println("\nCreated index. Computing scores now...");
 
 			// Compute TF-IDF Scores
 			for (String term : map.keySet()) {
@@ -64,9 +57,9 @@ public final class Indexer {
 
 			System.out.println(map);
 
-			st.close();
-		} catch(SQLException e) {
-			System.out.println(e);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 }
