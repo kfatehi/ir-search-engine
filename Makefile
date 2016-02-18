@@ -3,7 +3,6 @@ JSON=lib/json-simple-1.1.1.jar
 CLASSPATH=.:$(JSON):$(BUILD)
 
 SRC= \
-		 src/ir/db/*.java \
 		 src/ir/search/*.java \
 
 # runs indexer but does not save the file and only does first 100 docs
