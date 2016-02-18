@@ -6,7 +6,7 @@ import ir.analysis.db.Database;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
+import gnu.trove.map.hash.THashMap;
 import java.util.Collections;
 
 import java.sql.*;
@@ -19,17 +19,17 @@ public final class Indexer {
 	public static void main(String[] args) {
 		// Map of Document ID to ArrayList of Postings List
 		System.out.println("Indexer starting...");
-		HashMap<String,HashMap> map = new HashMap<>();
+		THashMap<String,THashMap> map = new THashMap<>();
 		try {
 			Corpus corpus = new Corpus("_corpus");
 			while (corpus.next()) { // && corpus.position < 10) {
 				String percent = String.format("%.2f", (corpus.position/(float) corpus.size())*100);
-				System.out.print("\rProcessing document: "+corpus.position+" of "+corpus.size()+" ("+percent+"%)");
+				System.out.print("\rProcessing document: "+corpus.position+" of "+corpus.size()+" ("+percent+"%) index size: "+map.size());
 				Integer docId = corpus.position;
 				String docText = corpus.current().getText();
 				List<String> words = Utilities.tokenizeString(docText);
 				for (String term : words) {
-					HashMap<Integer,Integer> termFreq = map.getOrDefault(term, new HashMap<>());
+					THashMap<Integer,Integer> termFreq = map.getOrDefault(term, new THashMap<>());
 					int currentValue = termFreq.getOrDefault(docId, 0);
 					termFreq.put(docId, currentValue+1);
 					map.put(term, termFreq);
@@ -40,8 +40,8 @@ public final class Indexer {
 
 			// Compute TF-IDF Scores
 			for (String term : map.keySet()) {
-				HashMap<Integer,Double> tfidfMap = new HashMap<>();
-				HashMap<Integer,Integer> termFreq = map.get(term);
+				THashMap<Integer,Double> tfidfMap = new THashMap<>();
+				THashMap<Integer,Integer> termFreq = map.get(term);
 
 				for (Integer docId : termFreq.keySet()) {
 					int freq = termFreq.get(docId);

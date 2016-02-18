@@ -1,6 +1,7 @@
 BUILD=_build
 JSON=lib/json-simple-1.1.1.jar
-CLASSPATH=.:$(JSON):$(BUILD)
+TROVE=lib/trove-3.1a1-src.jar
+CLASSPATH=.:$(JSON):$(TROVE):$(BUILD)
 
 SRC= \
 		 src/ir/db/*.java \
