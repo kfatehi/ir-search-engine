@@ -16,8 +16,6 @@ import org.json.simple.parser.ParseException;
  
 public final class Indexer {
 
-	public static int totalDocs = 32739;
-
 	public static void main(String[] args) {
 		// Map of Document ID to ArrayList of Postings List
 		System.out.println("Indexer starting...");
@@ -25,7 +23,8 @@ public final class Indexer {
 		try {
 			Corpus corpus = new Corpus("_corpus");
 			while (corpus.next()) { // && corpus.position < 10) {
-				System.out.print("\rProcessing document: "+corpus.position+" of "+corpus.size()+" ("+corpus.position/corpus.size()+"%)");
+				String percent = String.format("%.2f", (corpus.position/(float) corpus.size())*100);
+				System.out.print("\rProcessing document: "+corpus.position+" of "+corpus.size()+" ("+percent+"%)");
 				Integer docId = corpus.position;
 				String docText = corpus.current().getText();
 				List<String> words = Utilities.tokenizeString(docText);
@@ -47,7 +46,7 @@ public final class Indexer {
 				for (Integer docId : termFreq.keySet()) {
 					int freq = termFreq.get(docId);
 					double wtf = 1 + Math.log(freq);
-					double tfidf = wtf * Math.log( totalDocs / termFreq.keySet().size() );
+					double tfidf = wtf * Math.log( (float) corpus.size() / termFreq.keySet().size() );
 
 					tfidfMap.put(docId, tfidf);
 				}
