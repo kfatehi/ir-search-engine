@@ -61,7 +61,7 @@ public class Utilities {
 		final Scanner sc;
 		sc = new Scanner(input).useDelimiter(" ");
 		while (sc.hasNext()) {
-			String token = sc.next();
+			String token = sc.next().toLowerCase();
 
 			if (! token.matches("^\\w+$")) {
 				continue;

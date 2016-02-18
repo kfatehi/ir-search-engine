@@ -3,33 +3,30 @@ package ir.search;
 import ir.analysis.Utilities;
 import ir.analysis.db.Database;
 
-import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
-import gnu.trove.map.hash.THashMap;
 import java.util.Collections;
+import java.util.HashMap;
 
 import java.sql.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import org.json.simple.parser.ParseException;
+import java.io.*;
  
 public final class Indexer {
 
 	public static void main(String[] args) {
 		// Map of Document ID to ArrayList of Postings List
 		System.out.println("Indexer starting...");
-		THashMap<String,THashMap> map = new THashMap<>();
+		HashMap<String,HashMap> map = new HashMap<>();
 		try {
 			Corpus corpus = new Corpus("_corpus");
-			while (corpus.next()) { // && corpus.position < 10) {
+			while (corpus.next()) {
 				String percent = String.format("%.2f", (corpus.position/(float) corpus.size())*100);
 				System.out.print("\rProcessing document: "+corpus.position+" of "+corpus.size()+" ("+percent+"%) index size: "+map.size());
 				Integer docId = corpus.position;
 				String docText = corpus.current().getText();
 				List<String> words = Utilities.tokenizeString(docText);
 				for (String term : words) {
-					THashMap<Integer,Integer> termFreq = map.getOrDefault(term, new THashMap<>());
+					HashMap<Integer,Integer> termFreq = map.getOrDefault(term, new HashMap<>());
 					int currentValue = termFreq.getOrDefault(docId, 0);
 					termFreq.put(docId, currentValue+1);
 					map.put(term, termFreq);
@@ -40,8 +37,8 @@ public final class Indexer {
 
 			// Compute TF-IDF Scores
 			for (String term : map.keySet()) {
-				THashMap<Integer,Double> tfidfMap = new THashMap<>();
-				THashMap<Integer,Integer> termFreq = map.get(term);
+				HashMap<Integer,Double> tfidfMap = new HashMap<>();
+				HashMap<Integer,Integer> termFreq = map.get(term);
 
 				for (Integer docId : termFreq.keySet()) {
 					int freq = termFreq.get(docId);
@@ -54,7 +51,13 @@ public final class Indexer {
 				map.put(term, tfidfMap);
 			}
 
-			System.out.println(map);
+			System.out.println("Saving index to index.bin");
+			File file = new File("index.bin");
+			FileOutputStream stream = new FileOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(stream);
+			oos.writeObject(map);
+			oos.flush();
+			oos.close();
 
 		}
 		catch(Exception ex) {
