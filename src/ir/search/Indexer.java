@@ -14,12 +14,17 @@ import java.io.*;
 public final class Indexer {
 
 	public static void main(String[] args) {
+		int limit = Integer.valueOf(System.getProperty("limit"));
+
 		// Map of Document ID to ArrayList of Postings List
 		System.out.println("Indexer starting...");
 		HashMap<String,HashMap> map = new HashMap<>();
 		try {
 			Corpus corpus = new Corpus("_corpus");
 			while (corpus.next()) {
+				if (limit != 0 && corpus.position > limit) {
+					break;
+				}
 				String percent = String.format("%.2f", (corpus.position/(float) corpus.size())*100);
 				System.out.print("\rProcessing document: "+corpus.position+" of "+corpus.size()+" ("+percent+"%) index size: "+map.size());
 				Integer docId = corpus.position;
@@ -51,14 +56,22 @@ public final class Indexer {
 				map.put(term, tfidfMap);
 			}
 
-			System.out.println("Saving index to index.bin");
-			File file = new File("index.bin");
-			FileOutputStream stream = new FileOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(stream);
-			oos.writeObject(map);
-			oos.flush();
-			oos.close();
+			boolean save = Boolean.valueOf(System.getProperty("save"));
 
+			if (save) {
+				System.out.println("Saving index to index.bin");
+				File file = new File("index.bin");
+				FileOutputStream stream = new FileOutputStream(file);
+				ObjectOutputStream oos = new ObjectOutputStream(stream);
+				oos.writeObject(map);
+				oos.flush();
+				oos.close();
+			} else {
+				// Doing a demo, dump the map
+				for ( String term : map.keySet() ) {
+					System.out.println(term+":"+map.get(term));
+				}
+			}
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
