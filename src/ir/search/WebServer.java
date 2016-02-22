@@ -4,6 +4,12 @@ import static spark.Spark.*;
 
 public class WebServer {
     public static void main(String[] args) {
-        get("/hello", (req, res) -> "Hello World");
+		staticFileLocation("/public");
+
+		get("/search", (req, res) -> {
+			String query = req.queryParams("query");
+
+			return "results of "+query+" as templated html";
+		});
     }
 }
