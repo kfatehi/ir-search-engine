@@ -4,6 +4,9 @@ CLASSPATH=.:lib/*:$(BUILD)
 SRC= \
 		 src/ir/search/*.java \
 
+test-query: compile
+	java -classpath $(CLASSPATH) ir.search.SearchEngine mondego
+
 server: compile
 	java -classpath $(CLASSPATH) ir.search.WebServer
 
