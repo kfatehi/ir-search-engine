@@ -22,13 +22,17 @@ public final class Corpus {
 		this.jsonObject = (JSONObject) obj;
 	}
 
+	public Document getDocument(int id) {
+		JSONObject doc = (JSONObject) this.jsonObject.get(String.valueOf(id));
+		String file = (String) doc.get("file");
+		String url = (String) doc.get("url");
+		return new Document(dirName+"/Html/"+file, url);
+	}
+
 	public boolean next() {
 		this.position++;
 		try {
-			JSONObject doc = (JSONObject) this.jsonObject.get(String.valueOf(this.position));
-			String file = (String) doc.get("file");
-			String url = (String) doc.get("url");
-			this.currentDocument = new Document(dirName+"/Html/"+file, url);
+			this.currentDocument = getDocument(this.position);
 			return true;
 		} catch(NullPointerException ex) {
 			this.position--;

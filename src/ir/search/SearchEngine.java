@@ -3,9 +3,32 @@ package ir.search;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.*;
+import java.util.Comparator;
 
 public class SearchEngine {
 	private HashMap<String,HashMap> index;
+	private Corpus corpus;
+
+	public SearchEngine() {
+		try {
+			this.corpus = new Corpus("_corpus");
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	/**
+	 * A comparator used to sort a list of search results.
+	 *
+	 * <h2>Sort Criteria</h2><ol>
+	 * <li>decreasing score</li>
+	 */
+	public static Comparator<SearchResult> resultComparator = new Comparator<SearchResult>() {
+		public int compare(SearchResult a, SearchResult b) {
+			return Double.compare(b.getScore(), a.getScore());
+		}
+	};
 
 	public void loadIndex(String fileName) {
 		try {
@@ -26,7 +49,23 @@ public class SearchEngine {
 	public ArrayList query(String query) {
 		ArrayList<SearchResult> results = new ArrayList<>();
 		System.out.println("perform query for: "+query);
-		// perform the query...
+
+		String term = query; // dont enter bigrams and stuff yet!!!
+
+		HashMap<Integer, Double> docs = this.index.get(term);
+
+		for (Integer docId : docs.keySet()) {
+			Double score = docs.get(docId);
+			Document doc = this.corpus.getDocument(docId);
+			SearchResult se = new SearchResult(score, doc);
+			results.add(se);
+		}
+		System.out.println(results);
+
+		results.sort(resultComparator);
+
+		System.out.println(results);
+
 		return results;
 	}
 

@@ -20,6 +20,9 @@ dump: compile
 index: compile
 	java -classpath $(CLASSPATH) -Dsave=true -Dlimit=0 ir.search.Indexer
 
+index-small: compile
+	java -classpath $(CLASSPATH) -Dsave=true -Dlimit=100 ir.search.Indexer
+
 compile: clean
 	javac -g -d $(BUILD) -classpath $(CLASSPATH) $(SRC)
 
@@ -29,3 +32,9 @@ clean:
 
 deps:
 	mvn dependency:copy-dependencies -DoutputDirectory=lib
+
+use-large-index:
+	ln -sf index.large.bin index.bin
+
+use-small-index:
+	ln -sf index.small.bin index.bin
