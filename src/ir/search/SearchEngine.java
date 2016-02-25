@@ -49,23 +49,19 @@ public class SearchEngine {
 	public ArrayList query(String query) {
 		ArrayList<SearchResult> results = new ArrayList<>();
 		System.out.println("perform query for: "+query);
-
-		String term = query; // dont enter bigrams and stuff yet!!!
-
-		HashMap<Integer, Double> docs = this.index.get(term);
-
-		for (Integer docId : docs.keySet()) {
-			Double score = docs.get(docId);
-			Document doc = this.corpus.getDocument(docId);
-			SearchResult se = new SearchResult(score, doc);
-			results.add(se);
+		String[] terms = query.split("\\s+");
+		for (String term : terms) {
+			HashMap<Integer, Double> termDocs = this.index.get(term.toLowerCase());
+			if (termDocs != null) {
+				for (Integer docId : termDocs.keySet()) {
+					Double score = termDocs.get(docId);
+					Document doc = this.corpus.getDocument(docId);
+					SearchResult se = new SearchResult(score, doc);
+					results.add(se);
+				}
+			}
 		}
-		System.out.println(results);
-
 		results.sort(resultComparator);
-
-		System.out.println(results);
-
 		return results;
 	}
 

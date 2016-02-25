@@ -13,7 +13,8 @@ public class WebServer {
 		get("/search", (req, res) -> {
 			String query = req.queryParams("query");
 			ArrayList results = engine.query(query);
-			return "results of "+query+" as templated html";
+			System.out.println(results);
+			return results;
 		});
     }
 }
