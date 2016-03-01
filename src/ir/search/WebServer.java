@@ -26,7 +26,7 @@ public class WebServer {
 			html+="<ul>";
 
 			for (SearchResult result : results) {
-				html += "<li>"+result.toString()+"</li>";
+				html += "<li><a href=\""+result+"\">"+result+"</a></li>";
 			}
 
 			html += "</ul>";
