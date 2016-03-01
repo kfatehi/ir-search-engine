@@ -16,6 +16,4 @@ Start the search engine as a web server:
 
 `make server`
 
-Run a query against the search server via the command line:
-
-`curl "localhost:4567/search?query=your+query"`
+Open the interface at http://localhost:4567

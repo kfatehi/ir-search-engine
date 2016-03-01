@@ -12,9 +12,26 @@ public class WebServer {
 
 		get("/search", (req, res) -> {
 			String query = req.queryParams("query");
-			ArrayList results = engine.query(query);
-			System.out.println(results);
-			return results;
+			ArrayList<SearchResult> results = engine.query(query);
+
+			String html = "";
+
+			html+="<form action=\"/search\" method=\"get\">";
+			html+="  <input type=\"text\" name=\"query\" />";
+			html+="  <input type=\"submit\" />";
+			html+="</form>";
+
+			html+="<p>Total search results: "+results.size()+"</p>";
+
+			html+="<ul>";
+
+			for (SearchResult result : results) {
+				html += "<li>"+result.toString()+"</li>";
+			}
+
+			html += "</ul>";
+
+			return html;
 		});
     }
 }
