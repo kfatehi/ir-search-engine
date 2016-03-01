@@ -47,20 +47,24 @@ public class SearchEngine {
 	}
 
 	public ArrayList query(String query) {
-		ArrayList<SearchResult> results = new ArrayList<>();
 		System.out.println("perform query for: "+query);
 		String[] terms = query.split("\\s+");
+		HashMap <Integer, SearchResult> resultScores = new HashMap<>();
+
 		for (String term : terms) {
 			HashMap<Integer, Double> termDocs = this.index.get(term.toLowerCase());
 			if (termDocs != null) {
 				for (Integer docId : termDocs.keySet()) {
 					Double score = termDocs.get(docId);
 					Document doc = this.corpus.getDocument(docId);
-					SearchResult se = new SearchResult(score, doc);
-					results.add(se);
+					SearchResult result = resultScores.getOrDefault(docId, new SearchResult(0.0, doc));
+					result.increaseScore(score);
+					resultScores.put(docId, result);
 				}
 			}
 		}
+
+		ArrayList<SearchResult> results = new ArrayList<SearchResult>(resultScores.values());
 		results.sort(resultComparator);
 		return results;
 	}

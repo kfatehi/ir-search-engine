@@ -13,6 +13,11 @@ public final class SearchResult {
 		return this.score;
 	}
 
+	public Double increaseScore(Double score) {
+		this.score += score;
+		return this.score;
+	}
+
 	public String toString() {
 		return this.document.toString();
 	}
