@@ -16,6 +16,7 @@ public class WebServer {
 
 			String html = "";
 
+			html+="<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">";
 			html+="<form action=\"/search\" method=\"get\">";
 			html+="  <input type=\"text\" name=\"query\" />";
 			html+="  <input type=\"submit\" />";

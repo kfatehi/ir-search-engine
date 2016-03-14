@@ -1,0 +1,20 @@
+html {
+  font-family: "Helvetica";
+}
+
+form:before{
+  content: "CS 121 SEARCH ENGINE";
+  font-size: 32px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 20px;
+}
+
+form {
+  margin: 50px;
+  text-align: center;
+}
+
+form input[type=text] {
+  width: 200px;
+}
