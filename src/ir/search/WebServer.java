@@ -22,12 +22,16 @@ public class WebServer {
 			html+="  <input type=\"submit\" />";
 			html+="</form>";
 
-			html+="<p>Total search results: "+results.size()+"</p>";
+			html+="<p>Total search results: "+results.size()+", showing only the top results.</p>";
 
 			html+="<ul>";
 
+			int count = 0;
+
 			for (SearchResult result : results) {
 				html += "<li><a href=\""+result+"\">"+result+"</a></li>";
+				count++;
+				if (count == 20) break;
 			}
 
 			html += "</ul>";

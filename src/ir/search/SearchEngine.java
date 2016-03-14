@@ -64,8 +64,11 @@ public class SearchEngine {
 			}
 		}
 
+		System.out.println("Got results -- now about to convert from hashmap to arraylist...");
 		ArrayList<SearchResult> results = new ArrayList<SearchResult>(resultScores.values());
+		System.out.println("Got results -- now about to sort them...");
 		results.sort(resultComparator);
+		System.out.println("done");
 		return results;
 	}
 
